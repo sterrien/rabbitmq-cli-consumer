@@ -262,10 +262,12 @@ func New(cfg *config.Config, factory *command.CommandFactory, errLogger, infLogg
 
 		// Bind queue
 		infLogger.Printf("Binding queue \"%s\" to exchange \"%s\"...", cfg.RabbitMq.Queue, cfg.Exchange.Name)
-		err = ch.QueueBind(cfg.RabbitMq.Queue, transformToStringValue(cfg.QueueSettings.Routingkey), transformToStringValue(cfg.Exchange.Name), false, nil)
+                for i := 0; i < len(cfg.QueueSettings.Routingkey); i++ {
+			err = ch.QueueBind(cfg.RabbitMq.Queue, transformToStringValue(cfg.QueueSettings.Routingkey[i]), transformToStringValue(cfg.Exchange.Name), false, nil)
 
-		if nil != err {
-			return nil, errors.New(fmt.Sprintf("Failed to bind queue to exchange: %s", err.Error()))
+			if nil != err {
+				return nil, errors.New(fmt.Sprintf("Failed to bind queue to exchange: %s", err.Error()))
+			}
 		}
 	}
 
